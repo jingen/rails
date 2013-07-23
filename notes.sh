@@ -13,3 +13,9 @@ rails console
     Issue.all
     Issue.create({title: "My first issue", description: "My first issue description", no_followers:0 })
 
+# using scaffold 
+rails new new_issues
+cd new_issues
+rails g scaffold issue title description:text no_followers:integer
+rake db:migrate
+rails s
