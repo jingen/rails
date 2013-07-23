@@ -22,9 +22,11 @@ NewIssues::Application.routes.draw do
   #       get 'short'
   #       post 'toggle'
   #     end
-  #
+  #       short_product_path
+  #       toggle_product_path
+
   #     collection do
-  #       get 'sold'
+  #       get 'sold' #sold_products_path
   #     end
   #   end
 
@@ -34,11 +36,17 @@ NewIssues::Application.routes.draw do
   #     resource :seller
   #   end
 
+  #product_comments_path
+  #product_comment_path
+  #product_sales_path
+  #product_sale_path
+  #product_seller_path
+
   # Example resource route with more complex sub-resources:
   #   resources :products do
   #     resources :comments
   #     resources :sales do
-  #       get 'recent', on: :collection
+  #       get 'recent', on: :collection #sales_recent_path
   #     end
   #   end
   
@@ -55,4 +63,6 @@ NewIssues::Application.routes.draw do
   #     # (app/controllers/admin/products_controller.rb)
   #     resources :products
   #   end
+  #public/index.html
+  #root :to => 'issues#new'
 end
