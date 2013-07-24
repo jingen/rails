@@ -19,3 +19,23 @@ cd new_issues
 rails g scaffold issue title description:text no_followers:integer
 rake db:migrate
 rails s
+
+http://api.rubyonrails.org/classes/ActionView/Helpers.html
+
+Issue.all
+Issue.first
+Issue.order("title")
+Issue.order("title").first
+Issue.order("title").last
+Issue.order("title desc").last
+Issue.order("title desc").limit 3
+Issue.find(1)
+Issue.find(10)
+Issue.find_by_no_followers(1)
+Issue.find_by_title("NYU")
+Issue.find_all_by_no_followers(1)
+Issue.where "title = ?" , "NYU"
+Issue.where("title = ?" , "NYU").where("no_followers = ?", 3)
+Issue.where("title = ?" , "NYU").where("no_followers = ?", 1)
+Issue.where("title = ?" , "NYU").where("no_followers = ?", 2)
+
