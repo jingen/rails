@@ -1,1 +1,1 @@
-/Users/jingenlin/Documents/coursesVideo/ridingbyrails/code/notes.sh
+../notes.sh

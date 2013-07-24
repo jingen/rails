@@ -4,7 +4,18 @@ class IssuesController < ApplicationController
   # GET /issues
   # GET /issues.json
   def index
-    @issues = Issue.all
+    # @issues = Issue.all
+    @issues = Issue
+    @issues = Issue.order(params[:sort]) if params[:sort]
+    @issues = @issues.all
+
+    respond_to do |format|
+      format.html
+      format.json { render xml: @issues }
+      format.xml { render xml: @issues }
+      format.rss # index.rss.builder
+      format.csv # index.css.erb
+    end
   end
 
   # GET /issues/1
