@@ -1,5 +1,9 @@
+<%- content_for :nav do %>
+  <li><a href="/issues/1">First issue</a></li>
+<%-end %>
 <h1>Listing issues</h1>
 
+<%=render "search" %>
 <table>
   <thead>
     <tr>
