@@ -39,7 +39,8 @@ class IssuesController < ApplicationController
 
     respond_to do |format|
       if @issue.save
-        format.html { redirect_to @issue, notice: 'Issue was successfully created.' }
+        # format.html { redirect_to @issue, notice: 'Issue was successfully created.' }
+        format.html { redirect_to issue_path(id: @issue.id), notice: t("issues.created", title: @issue.title) }
         format.json { render action: 'show', status: :created, location: @issue }
       else
         format.html { render action: 'new' }
@@ -80,6 +81,6 @@ class IssuesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def issue_params
-      params.require(:issue).permit(:title, :description, :no_followers)
+      params.require(:issue).permit(:title, :description, :no_followers, :tags)
     end
 end

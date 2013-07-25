@@ -61,8 +61,8 @@ rake db:migrate
 Issue.pluck :project_id
 
 has_many :issues
-has_mang_and_belongs_to :projects
-has_mang_and_belongs_to :issues
+has_and_belongs_to_many :projects
+has_and_belongs_to_many :issues
 
 class CreateIssuesProjects < ActiveRecord::Migration
   def change
@@ -74,4 +74,71 @@ class CreateIssuesProjects < ActiveRecord::Migration
     add_index(:issues_projects, [:issue_id, :project_id], :unique => true)
   end
 end
+
+rails g controller timeline index
+rails g model timeline content timelineable_type timelineable_id:integer
+:in Timeline, belongs_to :timelineable, polymorphic: true
+
+Timeline.destroy_all
+
+after_create :add_to_timeline
+#only create not update, after_save: both create and update
+before_save :strip_spaces_from_tags
+private
+
+def add_to_timeline
+	Timeline.create!({ content: "An issue was created!", timelineable_id: id, timelineable_type: self.class.to_s })
+end
+def strip_spaces_from_tags
+	self.tags.gsub! ", ", ","
+end
+
+rails g migration add_tags_to_issues tags
+def issue_params
+      params.require(:issue).permit(:title, :description, :no_followers, :tags)
+end
+
+i18n:
+config/application.rb
+:config.i18n.default_locale = :zh
+locales/zh.yml (download from github)
+
+:  <li><a href="/timeline/index"><%=t "nav.timeline"%></a></li>
+: t => translate
+
+class ApplicationController < ActionController::Base
+  # Prevent CSRF attacks by raising an exception.
+  # For APIs, you may want to use :null_session instead.
+  protect_from_forgery with: :exception
+
+  before_filter :set_locale
+
+  def set_locale
+    I18n.locale = params[:locale] || I18n.default_locale
+  end
+end
+http://localhost:3000/issues/locale=en
+
+http://localhost:3000/en/issues
+
+@issue => issue_path(id: @issue.id)
+
+<%=l @issue.created_at, format: :short%>
+
+config/environment/development.rb:
+  config.assets.debug = false
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

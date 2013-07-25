@@ -1,7 +1,9 @@
 NewIssues::Application.routes.draw do
-  resources :projects
-
-  resources :issues
+  scope "/:locale" do 
+	get "timeline/index"
+  	resources :projects
+  	resources :issues
+  end
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -15,9 +15,13 @@
   <%= @issue.no_followers %>
 </p>
 
+<p><b>Created at:</b>
+	<%=l @issue.created_at, format: :short%>
+</p>
+
 <p>
 	<b>Project:</b>
-	<%= link_to @issue.project.name, @issue.project %>
+	<%= link_to @issue.project.name, project_path(id: @issue.project.id) %>
 </p>
-<%= link_to 'Edit', edit_issue_path(@issue) %> |
+<%= link_to 'Edit', edit_issue_path(id: @issue.id) %> |
 <%= link_to 'Back', issues_path %>
