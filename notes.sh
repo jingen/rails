@@ -59,3 +59,19 @@ rake db:migrate
 rake db:rollback
 rake db:migrate
 Issue.pluck :project_id
+
+has_many :issues
+has_mang_and_belongs_to :projects
+has_mang_and_belongs_to :issues
+
+class CreateIssuesProjects < ActiveRecord::Migration
+  def change
+    create_table :issues_projects, :id => false do |t|
+      t.references :issue, :null => false
+      t.references :project, :null => false
+    end
+
+    add_index(:issues_projects, [:issue_id, :project_id], :unique => true)
+  end
+end
+
