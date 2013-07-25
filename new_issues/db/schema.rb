@@ -11,12 +11,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130723123747) do
+ActiveRecord::Schema.define(version: 20130725160108) do
 
   create_table "issues", force: true do |t|
     t.string   "title"
     t.text     "description"
     t.integer  "no_followers"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "project_id",   default: 1
+  end
+
+  create_table "issues_projects", id: false, force: true do |t|
+    t.integer "issue_id",   null: false
+    t.integer "project_id", null: false
+  end
+
+  add_index "issues_projects", ["issue_id", "project_id"], name: "index_issues_projects_on_issue_id_and_project_id", unique: true
+
+  create_table "projects", force: true do |t|
+    t.string   "name"
+    t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

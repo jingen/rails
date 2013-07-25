@@ -39,3 +39,23 @@ Issue.where("title = ?" , "NYU").where("no_followers = ?", 3)
 Issue.where("title = ?" , "NYU").where("no_followers = ?", 1)
 Issue.where("title = ?" , "NYU").where("no_followers = ?", 2)
 
+<th>Title <%=link_to "sort", issues_path(sort: "title") %></th>
+
+app/validator/yesnovalidator.rb
+:create def validate(record)
+:in issue.rb validate_with Yesnovalidator
+:in issue.rb
+	validates_presence_of :title
+	validates_uniqueness_of :title, message: "should be unique, sir."
+	validates_length_of :description, minimum: 10, maximum: 12
+	validates_numericality_of :no_followers, allow_blank: true
+
+rails g scaffold project name description:text
+rake db:migrate
+rails g migration add_project_id_to_issues project_id:integer
+rake db:migrate
+: in issue.rb; belongs_to :project
+: in project.rb; has_many :issues
+rake db:rollback
+rake db:migrate
+Issue.pluck :project_id
