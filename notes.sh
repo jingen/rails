@@ -128,11 +128,32 @@ http://localhost:3000/en/issues
 config/environment/development.rb:
   config.assets.debug = false
 
+root: Gemfile
 
+test, development, production, 
 
+gem "haml-rails"
 
+bundle install (not only Gemfile but specified in Gemfile.lock)
+bundle update (Gemfile)
 
+rails g mailer issue_mailer
 
+:config environment/development.rb
+  config.action_mailer.perform_deliveries = true 
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    :address => "smtp.gmail.com",
+    :port => 587,
+    # :domain => 'baci.lindsaar.net',
+    :user_name => "jelinmscs@gmail.com",
+    :password => "83681600lje.",
+    :authentication => :plain,
+    :enable_starttls_auto => true
+  }
+
+guides.rubyonrails.org/action_mailer_basics.html
 
 
 

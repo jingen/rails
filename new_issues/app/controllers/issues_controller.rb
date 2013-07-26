@@ -40,6 +40,7 @@ class IssuesController < ApplicationController
     respond_to do |format|
       if @issue.save
         # format.html { redirect_to @issue, notice: 'Issue was successfully created.' }
+        IssueMailer.issue_created(@issue).deliver
         format.html { redirect_to issue_path(id: @issue.id), notice: t("issues.created", title: @issue.title) }
         format.json { render action: 'show', status: :created, location: @issue }
       else
