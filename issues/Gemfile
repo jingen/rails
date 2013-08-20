@@ -32,6 +32,21 @@ group :doc do
   gem 'sdoc', require: false
 end
 
+gem 'kaminari'
+gem 'therubyracer'
+gem 'mongoid', git: 'https://github.com/mongoid/mongoid.git'
+gem "mongoid-paperclip", :require => "mongoid_paperclip"
+#gem "mongoid-ancestry"
+gem 'mongoid-tree', :git => 'git://github.com/benedikt/mongoid-tree', :require => 'mongoid/tree'
+
+gem 'aws-sdk'
+
+gem 'bson_ext'
+gem 'rails_admin', github: 'sferik/rails_admin'
+
+gem "devise", "3.0.1"
+gem "protected_attributes"
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
