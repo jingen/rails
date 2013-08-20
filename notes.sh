@@ -174,7 +174,3 @@ Useful gem
 
 rails g mongoid:config
 (Rails.env)
-
-
-
-
