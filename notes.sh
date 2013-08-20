@@ -154,3 +154,23 @@ rails g mailer issue_mailer
   }
 
 guides.rubyonrails.org/action_mailer_basics.html
+
+Useful references:
+1) Ruby on Rails guides
+2) Railscasts
+3) Ruby Toolbox
+4) Net.tutsplus
+5) Reddit.com/r/rails
+6) StackOverflow
+
+Useful gem
+1)Authentication: Devise Sorcery
+2)File uploads: Carrierwave
+3)PDF generation: PDFkit, Prawn
+4)Deployment: Capistrano, Heroku
+5)Fulltext search: Sunspot, Thinking Sphinx
+6)SOAP webservices: Savon
+
+
+rails g mongoid:config
+(Rails.env)
