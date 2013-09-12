@@ -12,7 +12,10 @@ rake db:migrate
 rails console
     Issue.all
     Issue.create({title: "My first issue", description: "My first issue description", no_followers:0 })
-
+    or
+    issue = Issue.new ({title: "My first issue", description: "My first issue description", no_followers:0 })
+    issue.save
+    issue.save!
 # using scaffold 
 rails new new_issues
 cd new_issues
@@ -172,5 +175,84 @@ Useful gem
 6)SOAP webservices: Savon
 
 
+#mongo:
 rails g mongoid:config
 (Rails.env)
+When you want to create the indexes in the database, use the provided rake task.
+# not neccessary
+$ rake db:mongoid:create_indexes
+Category.all.each do |test|
+  puts test.inspect
+end
+
+User.all.each do |user| puts user.inspect end;0 
+user = User.new(email: "jingen.lin.jl@gmail.com", lastname:"lin", firstname:"jingen", password:"password")
+user.save
+user.save! (will raise an error if there is an invalid record)
+
+User.ceate(email: "jingen.lin.jl@gmail.com", lastname:"lin", firstname:"jingen", password:"password")
+
+# View:
+layout:
+in the contoller, using the layout method
+layout :user
+
+class IssuesController < ApplicationController
+  layout "issue_layout" #views/layouts/issue_layout.html.erb
+  layout :products_layout
+ 
+  def show
+    @product = Product.find(params[:id])
+  end
+ 
+private
+  def products_layout
+      @current_user.special? ? "special" : "products"
+  end
+
+content_for
+in the template, index.html.erb, it can be anywhere (content for, %-
+<%- content_for :nav do %>
+  <p>I'm a nav</p>
+<%- end %>
+
+in layout
+    <%= yield :nav %> # if there are two or more nav content, they'll be served one by one
+
+view helper
+<% render 'search' %>
+there is a template '_search.html.erb' in the views/issues/_search.html.erb
+
+1) form_tag
+<%= form_tag "/search", method: :get do %> # /search : action, default is issues/, method, default is "post"
+    <p>
+        <%= text_field_tag :title, nil, size: 30%, placeholder: "Issue title" > #  <input id="title" name="title" type="text" > value is nil
+    </p>
+
+    <ul>
+        <li><%=check_box_tag :followers, 1 , true%> 1 followers</li># checkbox
+        <li><%=check_box_tag :followers, 2 %> 2 followers</li> 
+        <li><%=check_box_tag :followers, 3 %> 3+ followers</li>
+    </ul>
+
+    <p>
+        <%= date_select :created_at_start, nil %>
+        &rarr;
+        <%= date_select :created_at_end, nil %>
+    </p>
+    
+<%-end%>
+
+# text_field_tag(name, value = nil, options = {})
+# check_box_tag(name, value = "1", checked = false, options = {})
+# date_select(object_name, method, options = {}, html_options = {})
+# submit_tag(value = "Save changes", options = {})
+
+ image_tag("icon")
+# => <img alt="Icon" src="/assets/icon" />
+javascript_include_tag "xmlhr"
+# => <script src="/assets/xmlhr.js?1284139606"></script>
+stylesheet_link_tag "style"
+# => <link href="/assets/style.css" media="screen" rel="stylesheet" />
+
+api.rubyonrails.org/classes/ActionView/Helpers/
