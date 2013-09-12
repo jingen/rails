@@ -1,3 +1,5 @@
+<% %> (evaluate Ruby code), <% -%> (evaluate Ruby code, suppress the trailing newline) and <%- -%> (evaluate Ruby code, suppress the trailing newline and leading space)
+
 \curl -L https://get.rvm.io | bash -s stable --rails
 rails new my_app
 rails g controller hello world cowsay
@@ -35,16 +37,25 @@ Issue.order("title desc").limit 3
 Issue.find(1)
 Issue.find(10)
 Issue.find_by_no_followers(1)
+#no_followers = 1
 Issue.find_by_title("NYU")
 Issue.find_all_by_no_followers(1)
 Issue.where "title = ?" , "NYU"
+# where title = 'NYU'
 Issue.where("title = ?" , "NYU").where("no_followers = ?", 3)
+# be chained
+
 Issue.where("title = ?" , "NYU").where("no_followers = ?", 1)
 Issue.where("title = ?" , "NYU").where("no_followers = ?", 2)
 
 <th>Title <%=link_to "sort", issues_path(sort: "title") %></th>
+# /issues?sort="title"
+# in issue_controller, index method, 
+#@issues = Issue
+#@issues = Issue.order(params[:sort]) if params[:sort]
+#@issues = @issues.all
+#active_record_querying.html
 
-app/validator/yesnovalidator.rb
 :create def validate(record)
 :in issue.rb validate_with Yesnovalidator
 :in issue.rb
@@ -52,6 +63,12 @@ app/validator/yesnovalidator.rb
 	validates_uniqueness_of :title, message: "should be unique, sir."
 	validates_length_of :description, minimum: 10, maximum: 12
 	validates_numericality_of :no_followers, allow_blank: true
+custom validation
+
+validates_with Yesnovalidator
+app/validator/yesnovalidator.rb
+
+if you use the Rails form helpers to generate your forms, when a validation error occurs on a field, it will generate an extra <div> around the entry.
 
 rails g scaffold project name description:text
 rake db:migrate
@@ -248,7 +265,7 @@ there is a template '_search.html.erb' in the views/issues/_search.html.erb
 # date_select(object_name, method, options = {}, html_options = {})
 # submit_tag(value = "Save changes", options = {})
 
- image_tag("icon")
+image_tag("icon")
 # => <img alt="Icon" src="/assets/icon" />
 javascript_include_tag "xmlhr"
 # => <script src="/assets/xmlhr.js?1284139606"></script>
@@ -256,3 +273,40 @@ stylesheet_link_tag "style"
 # => <link href="/assets/style.css" media="screen" rel="stylesheet" />
 
 api.rubyonrails.org/classes/ActionView/Helpers/
+
+respond_to do |format|
+    format.html
+    format.json { render xml: @issues }
+    format.xml { render xml: @issues }
+    format.rss # index.rss.builder
+    format.csv # index.css.erb
+end
+
+index.rss.builder :
+
+xml.instruct! :xml, version: "1.0"
+xml.rss version: "2.0" do
+    xml.channel do
+        xml.title "Our issues"
+        xml.description "Latest issues, come and get there!"
+        xml.link issues_url
+
+        @issues.each do |issue|
+            xml.item do
+                xml.title issue.title
+                xml.pubDate issue.created_at.to_s(:rfc822)
+                xml.description issue.description
+            end
+        end
+    end
+end
+
+<%= auto_discovery_link_tag(:rss, issues_path(:rss)) %> #rss icon
+
+index.csv.erb :
+
+<%- @issues.each do |issue| %>
+<%=issue.title%>,<%=issue.created_at.to_s(:rfc822)%>,<%=issue.description%> 
+<%- end %>
+
+
