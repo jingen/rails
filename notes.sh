@@ -89,8 +89,10 @@ Issue.pluck :project_id
 @project.issues.each
 @issue.project
 
+in Project class
 has_many :issues, through: :join_model
-has_many :project, through: :join_model
+in Issue class
+has_many :projects, through: :join_model
 
 class JoinModel < ActiveRecord::Base
     belongs_to :project
@@ -99,6 +101,7 @@ end
 has_one :issue #@project.issue (only one)
 
 ### same with joinmodel
+
 has_and_belongs_to_many :projects
 has_and_belongs_to_many :issues
 
