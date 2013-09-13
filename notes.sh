@@ -80,7 +80,10 @@ rake db:rollback
 rake db:migrate
 Issue.pluck :project_id
 
-has_many :issues
+in Project class
+has_many :issues, through: :join_model
+in Issue class
+has_many :projects, through: :join_model
 has_and_belongs_to_many :projects
 has_and_belongs_to_many :issues
 
