@@ -1,4 +1,2 @@
-class Timeline 
-    include Mongoid::Document
-	belongs_to :timelineable, polymorphic: true
+class Timeline < ActiveRecord::Base
 end

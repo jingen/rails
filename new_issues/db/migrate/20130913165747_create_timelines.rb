@@ -1,6 +1,6 @@
 class CreateTimelines < ActiveRecord::Migration
   def change
-    create_table :timelines do |t|
+    create_table :timelines, :id =>false do |t|
       t.string :content
       t.string :timelineable_type
       t.integer :timelineable_id

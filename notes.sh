@@ -77,13 +77,32 @@ rake db:migrate
 : in issue.rb; belongs_to :project
 : in project.rb; has_many :issues
 rake db:rollback
+(rake db:migrate RAILS_ENV=development)
+(
+  def change
+    add_column :issues, :project_id, :integer, :default => 1
+  end
+)
 rake db:migrate
 Issue.pluck :project_id
 
-has_many :issues
+@project.issues.each
+@issue.project
+
+has_many :issues, through: :join_model
+has_many :project, through: :join_model
+
+class JoinModel < ActiveRecord::Base
+    belongs_to :project
+    belongs_to :issue
+end
+has_one :issue #@project.issue (only one)
+
+### same with joinmodel
 has_and_belongs_to_many :projects
 has_and_belongs_to_many :issues
 
+# extra table for many to many relation
 class CreateIssuesProjects < ActiveRecord::Migration
   def change
     create_table :issues_projects, :id => false do |t|
@@ -97,20 +116,51 @@ end
 
 rails g controller timeline index
 rails g model timeline content timelineable_type timelineable_id:integer
+
+### timelineable_type, timelineable_id
+###
+    rails g migration AddNameToSubscribers name:string
+    rails generate migration RemovePartNumberFromProducts part_number:string
+    rake db:migrate
+### 
+###class CreateTimelines < ActiveRecord::Migration
+###  def change
+###    create_table :timelines, :id =>false do |t|
+###      t.string :content
+###      t.string :timelineable_type
+###      t.integer :timelineable_id
+### To make this work, you need to declare both a foreign key column and a type column in the model that declares the polymorphic interface
+###
+###      t.timestamps
+###    end
+###  end
+###end
+
+rake db:migrate
 :in Timeline, belongs_to :timelineable, polymorphic: true
+#class Timeline < ActiveRecord::Base
+    #belongs_to :timelineable, polymorphic: true
+#end
 
-Timeline.destroy_all
 
+#Timeline.destroy_all
+##callbacks: 
 after_create :add_to_timeline
+#after_save :add_to_timeline
 #only create not update, after_save: both create and update
+
 before_save :strip_spaces_from_tags
+
 private
 
 def add_to_timeline
-	Timeline.create!({ content: "An issue was created!", timelineable_id: id, timelineable_type: self.class.to_s })
+    Timeline.create!({ content: "An issue was created!", timelineable_id: id, timelineable_type: self.class.to_s })
 end
+
+usage: <%=link_to timeline.timelinable.title, timeline.timelineable %>
+
 def strip_spaces_from_tags
-	self.tags.gsub! ", ", ","
+    self.tags.gsub! ", ", ","
 end
 
 rails g migration add_tags_to_issues tags
@@ -124,8 +174,15 @@ config/application.rb
 locales/zh.yml (download from github)
 
 :  <li><a href="/timeline/index"><%=t "nav.timeline"%></a></li>
-: t => translate
++ t => translate
++ in zh.yml(config/locales/zh.yml)
+ nav:
+    timeline: 时间表
+    issues:
+        list: 列表
+        new: 新建
 
+# configuring for I18n
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -140,13 +197,29 @@ end
 http://localhost:3000/issues/locale=en
 
 http://localhost:3000/en/issues
+in routes.rb:
+scope "/:locale" do
+    get "timeline/index"
+    resources :projects
+    resources :issues
+end
+# changes need to be made
+# issue is equivalent to issue_path
+# <%= link_to 'Show', issue %>   -----   <%= link_to 'Show', issue_path(id: issue.id) %>
+# <%= link_to 'Edit', edit_issue_path(issue) %> ------  <%= link_to 'Edit', edit_issue_path(id: issue.id) %>
+# <%= link_to 'Destroy', issue, confirm: 'Are you sure?', method: :delete %> ------ <%= link_to 'Destroy', issue_path(id: issue.id), confirm: 'Are you sure?', method: :delete %>
 
 @issue => issue_path(id: @issue.id)
 
 <%=l @issue.created_at, format: :short%>
+(l is short for "localize")
 
 config/environment/development.rb:
   config.assets.debug = false
+#reboot rails server, done
+# change default extension
+# config.sass.preferred_syntax = :sass
+# gem 'coffee-rails', comment out it and supress createing coffee extension
 
 root: Gemfile
 
@@ -157,7 +230,42 @@ gem "haml-rails"
 bundle install (not only Gemfile but specified in Gemfile.lock)
 bundle update (Gemfile)
 
+#change a Rails App to production
+rails server -e production
+RAILS_ENV=production ./script/server
+
 rails g mailer issue_mailer
+#app/mailers/issue_mailer
+###
+#class IssueMailer < ActionMailer::Base
+#  default from: "rails@issues.com"
+#
+#  def issue_created(issue)
+#  	@issue = issue
+#  	mail subject: "A new issue was created", to: "linjingen@hotmail.com"
+#  end
+#end
+###
+#app/views/issue_mailer/issue_created.html.erb
+#app/views/issue_mailer/issue_created.text.erb
+###
+#An issue has been created!
+#
+#Hi, how are you? We just wanted you to
+#know a new issue has been created.
+#
+#<%= @issue.title %>
+#
+#<%=@issue.description%>
+#
+#Number of followers:
+#<%=@issue.no_followers%>
+###
+#in method
+#in issues_controller.rb, create method
+###
+#IssueMailer.issue_created(@issue).deliver
+###
 
 :config environment/development.rb
   config.action_mailer.perform_deliveries = true 
@@ -172,6 +280,7 @@ rails g mailer issue_mailer
     :authentication => :plain,
     :enable_starttls_auto => true
   }
+  # boot the server(rails server)
 
 guides.rubyonrails.org/action_mailer_basics.html
 
@@ -308,5 +417,4 @@ index.csv.erb :
 <%- @issues.each do |issue| %>
 <%=issue.title%>,<%=issue.created_at.to_s(:rfc822)%>,<%=issue.description%> 
 <%- end %>
-
 
