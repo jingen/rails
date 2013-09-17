@@ -305,14 +305,48 @@ Useful gem
 
 
 #mongo:
+gem 'mongoid', git: 'https://github.com/mongoid/mongoid.git'
+#gem "mongoid", "~> 3.0.0"
 rails g mongoid:config
-(Rails.env)
+
+(Rails.env) specifies production or development or test
+
+in config/application.rb
+###
+require "action_controller/railtie"
+require "action_mailer/railtie"
+#require "active_resource/railtie", pulled from Rails 4.x, xml, json API so that Rails sites could "talk" to one another.
+require "rails/test_unit/railtie"
+require "sprockets/railtie" # Uncomment this line for Rails 3.1+
+
+
+# you've limited to :test, :development, or :production.
+Bundler.require(:default, Rails.env)
+
+module IssueWithMongo
+  class Application < Rails::Application
+    Mongoid.logger.level = Logger::DEBUG # log
+    Moped.logger.level = Logger::DEBUG
+  end
+###
+
+# Dynamic fields
+##If the attribute does not already exist on the document, Mongoid will not provide you with the getters and setters and will enforce normal method_missing behavior. In this case you must use the other provided accessor methods: ([] and []=) or (read_attribute and write_attribute).
+##Dynamic attributes can be completely turned off by setting the Mongoid configuration option allow_dynamic_fields to false.
+
 When you want to create the indexes in the database, use the provided rake task.
 # not neccessary
 $ rake db:mongoid:create_indexes
+# show all the record, like Issue.all
 Category.all.each do |test|
   puts test.inspect
 end
+
+Person.new(first_name: "Corbin") do |person|
+  person.password = "password"
+end
+
+attr_readonly :name, :origin
 
 User.all.each do |user| puts user.inspect end;0 
 user = User.new(email: "jingen.lin.jl@gmail.com", lastname:"lin", firstname:"jingen", password:"password")
@@ -349,6 +383,17 @@ in layout
     <%= yield :nav %> # if there are two or more nav content, they'll be served one by one
 
 view helper
+
+form_for
+
+when @issue is existing record
+<form accept-charset="UTF-8" action="/issues/5234780c55584cbdd8000001" class="edit_issue" id="edit_issue_5234780c55584cbdd8000001" method="post">
+<input name="_method" type="hidden" value="patch">
+    
+when @issue is new (@issue = issue.new)
+    <form accept-charset="UTF-8" action="/issues" class="new_issue" id="new_issue" method="post">
+
+
 <% render 'search' %>
 there is a template '_search.html.erb' in the views/issues/_search.html.erb
 
@@ -420,4 +465,5 @@ index.csv.erb :
 <%- @issues.each do |issue| %>
 <%=issue.title%>,<%=issue.created_at.to_s(:rfc822)%>,<%=issue.description%> 
 <%- end %>
+
 
