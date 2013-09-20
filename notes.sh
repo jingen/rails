@@ -355,6 +355,42 @@ user.save! (will raise an error if there is an invalid record)
 
 User.ceate(email: "jingen.lin.jl@gmail.com", lastname:"lin", firstname:"jingen", password:"password")
 
+
+Project: has_many(or has_one)
+Issue: belongs_to
+
+project = Project.new(name: "openassembly", description: "great")
+project.save
+project.issues << Issue.new(title: "database") #issues is saved in the database, only if project has been persisted in the database
+(has_one: project.issue = Issue.new(title: "database")) #issue is saved in the db
+
+issue = Issue.new(title: "computer")
+issue.project = Project.new (but has been not saved)
+issue.project.save
+
+> Issue.all.each do |i| project.issues.push(i) end;0
+
+#####polymorphic
+rails g model timeline
+
+In class Issue
+
+has_one :timeline, as: :timelineable #############
+after_save :add_to_timeline
+
+private
+
+def add_to_timeline
+    self.timeline = Timeline.new(content:"An issue was created!"); ############ automatically save in db
+end
+
+In class Timeline
+
+belongs_to :timelineable, polymorphic: true
+
+
+
+
 # View:
 layout:
 in the contoller, using the layout method
@@ -417,6 +453,12 @@ there is a template '_search.html.erb' in the views/issues/_search.html.erb
     
 <%-end%>
 
+2 form_for(@project) do |f|
+<%=f.text_field :name%>
+#<input id="issue_title" name="issue[title]" type="text">
+end
+
+3
 # text_field_tag(name, value = nil, options = {})
 # check_box_tag(name, value = "1", checked = false, options = {})
 # date_select(object_name, method, options = {}, html_options = {})
